@@ -1,0 +1,4 @@
+git+https://github.com/CCareaga/chrislib.git
+git+https://github.com/mattloper/chumpy@9b045ff5d6588a24a0bab52c83f032e2ba433e17
+altered_midas @ git+https://github.com/CCareaga/MiDaS@master
+git+https://github.com/facebookresearch/pytorch3d.git@stable
