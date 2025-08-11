@@ -19,13 +19,16 @@ conda env create -f environment.yml
 conda activate persona
 pip install -r requirements.txt
 ```
-* Also, to download and install third-party modules, run below.
+
+* Also, to download and install third-party modules, first, please get granted to access [SVD](https://huggingface.co/stabilityai/stable-video-diffusion-img2vid-xt-1-1).
+* Then, login HuggingFace on your machine.
+* Finally, run below.
 ```
-sh install.sh
+bash install.sh
 ```
 
 ## Creating and animating avatars from a single image
-1. To create an avatar, you first need to fit SMPL-X to an image and generate training videos. Go to [here](./fitting/).
+1. To create an avatar, you first need to fit SMPL-X to an image and generate training videos. Go to [here](./preprocess/).
 2. Then, go to [here](./avatar) to create and animate the avatar.
 
 ## Tracking 3D whole-body poses from a video
