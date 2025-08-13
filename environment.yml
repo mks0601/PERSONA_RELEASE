@@ -208,7 +208,7 @@ dependencies:
   - mpmath=1.3.0=py310h06a4308_0
   - mysql=8.4.0=h29a9f33_1
   - nccl=2.22.3.1=hbc370b7_1
-  - ncurses=6.4=h6a678d5_0
+  - conda-forge::ncurses
   - nettle=3.7.3=hbbd107a_1
   - networkx
   - nsight-compute=2024.1.1.4=0
@@ -317,6 +317,7 @@ dependencies:
       - grpcio==1.71.0
       - hf-xet==1.1.5
       - huggingface-hub==0.20.2
+      - huggingface_hub[cli]
       - humanfriendly==10.0
       - hydra-core==1.3.2
       - imageio==2.37.0

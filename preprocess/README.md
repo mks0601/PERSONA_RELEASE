@@ -53,7 +53,10 @@ ${ROOT}
 * Run `python run_test.py --root_path $ROOT_PATH`, where `$ROOT_PATH` is an **absolute path** to the subject. In the case of above directory, `$ROOT_PATH` is `$ROOT/data/subjects/$SUBJECT_NAME`.
 
 ## Preprocess examples
-* We provide an example of preprocessed data in [here]().
+* We provide an example of preprocessed data in below.
+* [Gyeongsik](https://drive.google.com/file/d/1Pbt6BL-trSFGEBGL6xGCa3q47TSlky5T/view?usp=sharing).
+* [Loose clothing 1](https://drive.google.com/file/d/1gRES16bj4-qi6aBZvq_PX4A4oGxeYjxe/view?usp=sharing).
+* [Loose_clothing_2](https://drive.google.com/file/d/1edZh7LvoLAHjtlWagJCE-cxb77irh78d/view?usp=sharing).
 
 ## Reference
 ```

@@ -21,7 +21,7 @@ else:
     subject_id = root_path.split('/')[-1]
 
 # iterate each motion
-motion_names = sorted([x.split('/')[-1] for x in glob(osp.join(cur_path, 'code_to_copy', 'MimicMotion', 'motion_*'))])
+motion_names = sorted([x.split('/')[-1] for x in glob(osp.join(cur_path, 'prepare_training_video_generation', 'motion_*'))])
 for motion_name in motion_names:
 
     if motion_name not in ['motion_0', 'motion_1']:
@@ -32,7 +32,7 @@ for motion_name in motion_names:
     os.makedirs(split_root_path, exist_ok=True)
     
     # MimicMotion
-    os.chdir(osp.join(cur_path, 'code_to_copy', 'MimicMotion'))
+    os.chdir(osp.join(cur_path, 'prepare_training_video_generation'))
     cmd = 'python prepare_video.py --root_path ' + split_root_path + ' --motion_path ' + motion_name # hard-coded path to get motion
     print(cmd)
     result = os.system(cmd)
@@ -59,7 +59,7 @@ for motion_name in motion_names:
     os.chdir(cur_path)
 
     # fix foot poses
-    os.chdir(osp.join(cur_path, 'code_to_copy', 'MimicMotion'))
+    os.chdir(osp.join(cur_path, 'prepare_training_video_generation'))
     cmd = 'python fix_foot_pose.py --root_path ' + split_root_path
     print(cmd)
     result = os.system(cmd)

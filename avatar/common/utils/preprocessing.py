@@ -51,7 +51,7 @@ def set_aspect_ratio(bbox, extend_ratio=1.25, aspect_ratio=1.0):
     bbox = bbox.astype(np.float32)
     return bbox
 
-def generate_patch_image(cvimg, bbox, out_shape):
+def get_patch_image(cvimg, bbox, out_shape, bordervalue=(0,0,0)):
     img = cvimg.copy()
     img_height, img_width, img_channels = img.shape
 
@@ -60,13 +60,13 @@ def generate_patch_image(cvimg, bbox, out_shape):
     bb_width = float(bbox[2])
     bb_height = float(bbox[3])
 
-    trans = gen_trans_from_patch_cv(bb_c_x, bb_c_y, bb_width, bb_height, out_shape[1], out_shape[0])
-    img_patch = cv2.warpAffine(img, trans, (int(out_shape[1]), int(out_shape[0])), flags=cv2.INTER_LINEAR)
+    trans = get_affine_trans_mat(bb_c_x, bb_c_y, bb_width, bb_height, out_shape[1], out_shape[0])
+    img_patch = cv2.warpAffine(img, trans, (int(out_shape[1]), int(out_shape[0])), flags=cv2.INTER_LINEAR, borderValue=bordervalue)
     img_patch = img_patch.astype(np.float32)
-    inv_trans = gen_trans_from_patch_cv(bb_c_x, bb_c_y, bb_width, bb_height, out_shape[1], out_shape[0], inv=True)
+    inv_trans = get_affine_trans_mat(bb_c_x, bb_c_y, bb_width, bb_height, out_shape[1], out_shape[0], inv=True)
     return img_patch, trans, inv_trans
 
-def gen_trans_from_patch_cv(c_x, c_y, src_w, src_h, dst_w, dst_h, inv=False):
+def get_affine_trans_mat(c_x, c_y, src_w, src_h, dst_w, dst_h, inv=False):
     src_center = np.array([c_x, c_y], dtype=np.float32)
     src_downdir = np.array([0, src_h * 0.5], dtype=np.float32)
     src_rightdir = np.array([src_w * 0.5, 0], dtype=np.float32)

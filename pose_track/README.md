@@ -25,22 +25,14 @@ ${ROOT}
 |-- |-- |-- |-- video.mp4
 |-- |-- |-- |-- valid_frame_list.txt
 ```
-* If you want only partial frames from videos, you can optionally save `valid_frame_list.txt` with your desired frame indices with newline for each frame index. For example, if you want 0th, 1st, 2nd, and 100th frames, `valid_frame_list.txt` should include `0\n1\n2\n100\n`. This is used only for the slow but accurate version.
+* If your original data do not have temporal space (set of seprated images), follow the first directoty. Otherwise, follow the second directory.
+* If you want only partial frames from videos, you can optionally save `valid_frame_list.txt` with your desired frame indices with newline for each frame index. For example, if you want 0th, 1st, 2nd, and 100th frames, `valid_frame_list.txt` should include `0\n1\n2\n100\n`.
 
-## Start (fast but less accurate version)
-* It 1) runs pre-trained SMPL-X regressor and 2) optionally temrapolly smooth regressed ones.
-* Go to `tools/SMPLest-X` folder.
-* Run `python run_smplest_x.py --root_path $PATH --data_format $DATA_FORMAT`.
-* `$PATH` is an **absolute path**. An example of `$PATH` of above directory is `$ROOT/data/subjects/$SUBJECT_NAME`.
-* `$DATA_FORMAT` is one of `image` or `video`. If you follow the first directoty, set `$DATA_FORMAT` to `image`. Otherwise, set `$DATA_FORMAT` to `video`.
-* Tracking results are saved in `$ROOT/data/subjects/$SUBJECT_NAME`.
-
-## Start (slow but accurate version)
-* It 1) fits regressed SMPL-X meshes to estimated 2D keypoints and depthmaps and 2) temporally smooth them when `$DATA_FORMAT` is `video`.
-* Go to `tools` folder.
+## Start
+* (Optional) If you want to specify bbox of the person in the first frame, prepare `$ROOT/data/subjects/$SUBJECT_NAME/bboxes/$FRAME_IDX.json` where `$FRAME_IDX` is the first frame index (e.g., 0). The json file should include [xmin, ymin, width, height].
 * Run `python run.py --root_path $PATH --data_format $DATA_FORMAT`.
 * `$PATH` is an **absolute path**. An example of `$PATH` of above directory is `$ROOT/data/subjects/$SUBJECT_NAME`.
-* `$DATA_FORMAT` is one of `image` or `video`. If you follow the first directoty, set `$DATA_FORMAT` to `image`. Otherwise, set `$DATA_FORMAT` to `video`.
+* `$DATA_FORMAT` is one of `image` or `video`. If your original data do not have temporal space (set of seprated images), follow the first directoty and set `$DATA_FORMAT` to `image`. Otherwise, follow the second directory and set `$DATA_FORMAT` to `video`.
 * Tracking results are saved in `$ROOT/data/subjects/$SUBJECT_NAME`.
 
 ## Tracked poses examples
@@ -55,3 +47,4 @@ ${ROOT}
   year={2025}
 }
 ```
+

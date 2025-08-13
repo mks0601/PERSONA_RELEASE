@@ -62,26 +62,14 @@ def main():
     joint_offset = nn.Parameter(torch.zeros((smpl_x.joint['num'],3)).float().cuda())
 
     for epoch in range(cfg.end_epoch):
-        cfg.set_itr_opt_num(epoch)
-
         for itr_data, data in enumerate(trainer.batch_generator):
             batch_size = data['kpt_img'].shape[0]
 
             for itr_opt in range(cfg.itr_opt_num):
-                cfg.set_stage(epoch, itr_opt)
+                cfg.set_stage(itr_opt)
 
                 # optimizer
-                if (epoch == 0) and (itr_opt == 0):
-                    # smplx and flame root pose and translatioin
-                    optimizable_params = []
-                    for frame_idx in data['frame_idx']:
-                        for key in ['root_pose', 'trans']:
-                            optimizable_params.append(smplx_params[int(frame_idx)][key])
-                        for key in ['root_pose', 'trans']:
-                            optimizable_params.append(flame_params[int(frame_idx)][key])
-                    trainer.get_optimizer(optimizable_params)
-                elif ((epoch == 0) and (itr_opt == cfg.stage_itr[0])) or ((epoch > 0) and (itr_opt == 0)):
-                    # all parameters
+                if itr_opt == 0:
                     if epoch == (cfg.end_epoch - 1):
                         optimizable_params = [] # do not optimize shared parameters to make per-frame parameters consistent with the shared ones
                     else:

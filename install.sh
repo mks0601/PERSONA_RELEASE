@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Move into third_modules directory
 pushd third_modules
@@ -55,9 +56,9 @@ huggingface-cli download \
   --resume-download
 wget https://github.com/mks0601/PERSONA_RELEASE/releases/download/untagged-7d04ffac1bfb95ed7960/motion_0.zip
 wget https://github.com/mks0601/PERSONA_RELEASE/releases/download/untagged-7d04ffac1bfb95ed7960/motion_1.zip
-mv motion_0.zip ../preprocess/tools/code_to_copy/MimicMotion/.
-mv motion_1.zip ../preprocess/tools/code_to_copy/MimicMotion/.
-pushd ../preprocess/tools/code_to_copy/MimicMotion/
+mv motion_0.zip ../preprocess/tools/prepare_training_video_generation/.
+mv motion_1.zip ../preprocess/tools/prepare_training_video_generation/.
+pushd ../preprocess/tools/prepare_training_video_generation/
 unzip motion_0.zip
 unzip motion_1.zip
 popd  # Return to third_modules
@@ -93,8 +94,16 @@ pushd sapiens/lite/scripts/demo/torchscript/checkpoints
 wget https://huggingface.co/facebook/sapiens-pose-bbox-detector/resolve/c844c2df76f1613d7c5e2910d8bf30039a55a386/rtmdet_m_8xb32-100e_coco-obj365-person-235e8209.pth # human detection
 wget https://huggingface.co/facebook/sapiens-depth-1b-torchscript/resolve/main/sapiens_1b_render_people_epoch_88_torchscript.pt2 # depth
 wget https://huggingface.co/facebook/sapiens-normal-1b-torchscript/resolve/main/sapiens_1b_normal_render_people_epoch_115_torchscript.pt2 # normal
-wget https://huggingface.co/noahcao/sapiens-pose-coco/resolve/main/sapiens_host/pose/checkpoints/sapiens_1b/sapiens_1b_coco_wholebody_best_coco_wholebody_AP_727.pth # pose
 wget https://huggingface.co/facebook/sapiens-seg-1b-torchscript/resolve/main/sapiens_1b_goliath_best_goliath_mIoU_7994_epoch_151_torchscript.pt2 # seg
+FILENAME="sapiens_1b_coco_wholebody_best_coco_wholebody_AP_727_torchscript.pt2" # pose
+huggingface-cli download noahcao/sapiens-pose-coco \
+  --include "sapiens_lite_host/torchscript/pose/checkpoints/sapiens_1b/${FILENAME}" \
+  --repo-type model \
+  --local-dir ./tmp_hf_download \
+  --local-dir-use-symlinks False \
+  --resume-download
+mv "./tmp_hf_download/sapiens_lite_host/torchscript/pose/checkpoints/sapiens_1b/${FILENAME}" "./${FILENAME}"
+rm -rf ./tmp_hf_download
 popd  # Return to third_modules
 
 # ===== 10. SMPLest-X =====
@@ -106,14 +115,12 @@ pushd SMPLest-X/pretrained_models/smplest_x_h
 wget https://huggingface.co/waanqii/SMPLest-X/resolve/main/smplest_x_h.pth.tar
 popd  # Return to third_modules
 
-# ===== 11. Move YOLO model file =====
-echo "Downloading YOLO model..."
-wget https://huggingface.co/Ultralytics/YOLO11/resolve/d3043e98a1ad0e2956728c13cf1e041e0fa4220f/yolo11l-pose.pt
-mv yolo11l-pose.pt ../preprocess/tools/.
-
-# ===== 12. human model files =====
+# ===== 11. human model files =====
 echo "Downloading human model files..."
 gdown 1kk5NyLurez9Dud5_d11aeMipMZsS5X2K
 unzip -o human_model_files.zip
 rm -f human_model_files.zip
 
+# ===== 12. fix torchgeometry bug =====
+ORIG_PATH=$(python -c "import torchgeometry, pathlib; print(pathlib.Path(torchgeometry.__file__).parent)")
+cp "./torchgeometry_bug_fixed/core/conversions.py" "${ORIG_PATH}/core/conversions.py"

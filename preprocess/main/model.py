@@ -198,55 +198,48 @@ class Model_w_id_opt(nn.Module):
         # loss functions
         loss = {}
         weight = torch.ones_like(smplx_kpt_proj)
-        if not cfg.warmup:
-            weight[:,[i for i in range(smpl_x.kpt['num']) if 'Face' in smpl_x.kpt['name'][i]],:] = 0
-            weight[face_valid,:,:] = 1 # do not use 2D loss if face is not visible
-            weight[:,smpl_x.kpt['name'].index('R_Eye'),:] *= 10
-            weight[:,smpl_x.kpt['name'].index('L_Eye'),:] *= 10
-            weight[:,[smpl_x.kpt['name'].index(name) for name in ['Face_' + str(i) for i in range(52,69)]],:] *= 0.1
+        weight[:,[i for i in range(smpl_x.kpt['num']) if 'Face' in smpl_x.kpt['name'][i]],:] = 0
+        weight[face_valid,:,:] = 1 # do not use 2D loss if face is not visible
+        weight[:,smpl_x.kpt['name'].index('R_Eye'),:] *= 10
+        weight[:,smpl_x.kpt['name'].index('L_Eye'),:] *= 10
+        weight[:,[smpl_x.kpt['name'].index(name) for name in ['Face_' + str(i) for i in range(52,69)]],:] *= 0.1
         loss['smplx_kpt_proj_wo_fo'] = self.coord_loss(smplx_kpt_proj_wo_fo, data['kpt_img'], data['kpt_valid'], smplx_kpt_cam.detach()) * weight
         loss['flame_kpt_proj'] = torch.abs(flame_kpt_proj - data['kpt_img'][:,smpl_x.kpt['part_idx']['face'],:]) * data['kpt_valid'][:,smpl_x.kpt['part_idx']['face'],:] * weight[:,smpl_x.kpt['part_idx']['face'],:]
-        if cfg.warmup:
-            loss['flame_to_smplx_v2v'] = torch.abs(flame_mesh_cam - smplx_mesh_cam[:,smpl_x.face_vertex_idx,:].detach())
-        else:
-            if cfg.use_depthmap_loss:
-                # rasterize depth map and compute depthmap loss
-                fragments = rasterize_xy(smplx_mesh_cam_wo_fo, smpl_x.face, data['cam_param_depth'], cfg.depth_render_shape)
-                is_face = torch.zeros((smpl_x.vertex_num)).index_fill(0, torch.LongTensor(smpl_x.face_vertex_idx), 1.0).cuda()[None,:].repeat(batch_size,1)
-                face_mask = render_vertex_texture(fragments, is_face, smpl_x.face).detach()
-                smplx_depth = fragments.zbuf[:,None,:,:,0]
-                flame_depth = rasterize_xy(flame_mesh_cam, flame.face, data['cam_param_depth'], cfg.depth_render_shape).zbuf[:,None,:,:,0]
-                loss['smplx_depth'] = self.depth_loss(smplx_depth, data['depth']) * 0.01
-                loss['flame_depth'] = self.depth_loss(flame_depth*face_mask, data['depth']*face_mask) * 0.01
-            loss['smplx_shape_reg'] = smplx_inputs['shape'] ** 2 * 0.01
-            loss['smplx_mesh'] = torch.abs((smplx_mesh_cam_wo_fo - smplx_kpt_cam_wo_fo[:,smpl_x.kpt['root_idx'],None,:]) - \
-                                            (smplx_mesh_cam_init - smplx_kpt_cam_init[:,smpl_x.kpt['root_idx'],None,:])) * 0.1 
-            smplx_input_pose = self.get_smplx_full_pose(smplx_inputs)
-            smplx_init_pose = self.get_smplx_full_pose(data['smplx_param'])
-            loss['smplx_pose'] = self.pose_loss(smplx_input_pose, smplx_init_pose) * 0.1
-            loss['smplx_pose_reg'] = self.pose_reg(smplx_input_pose)
+        if cfg.use_depthmap_loss:
+            # rasterize depth map and compute depthmap loss
+            fragments = rasterize_xy(smplx_mesh_cam_wo_fo, smpl_x.face, data['cam_param_depth'], cfg.depth_render_shape)
+            is_face = torch.zeros((smpl_x.vertex_num)).index_fill(0, torch.LongTensor(smpl_x.face_vertex_idx), 1.0).cuda()[None,:].repeat(batch_size,1)
+            face_mask = render_vertex_texture(fragments, is_face, smpl_x.face).detach()
+            smplx_depth = fragments.zbuf[:,None,:,:,0]
+            flame_depth = rasterize_xy(flame_mesh_cam, flame.face, data['cam_param_depth'], cfg.depth_render_shape).zbuf[:,None,:,:,0]
+            loss['smplx_depth'] = self.depth_loss(smplx_depth, data['depth']) * 0.01
+            loss['flame_depth'] = self.depth_loss(flame_depth*face_mask, data['depth']*face_mask) * 0.01
+        loss['smplx_shape_reg'] = smplx_inputs['shape'] ** 2 * 0.01
+        loss['smplx_mesh'] = torch.abs((smplx_mesh_cam_wo_fo - smplx_kpt_cam_wo_fo[:,smpl_x.kpt['root_idx'],None,:]) - \
+                                        (smplx_mesh_cam_init - smplx_kpt_cam_init[:,smpl_x.kpt['root_idx'],None,:])) * 0.1 
+        smplx_input_pose = self.get_smplx_full_pose(smplx_inputs)
+        smplx_init_pose = self.get_smplx_full_pose(data['smplx_param'])
+        loss['smplx_pose'] = self.pose_loss(smplx_input_pose, smplx_init_pose) * 0.1
+        loss['smplx_pose_reg'] = self.pose_reg(smplx_input_pose)
 
-            loss['flame_pose'] = self.pose_loss(flame_inputs['jaw_pose'], data['flame_param']['jaw_pose']) * 0.01
-            loss['flame_shape'] = (flame_inputs['shape'] - data['flame_param']['shape']) ** 2 * 0.01
-            loss['flame_expr'] = (flame_inputs['expr'] - data['flame_param']['expr']) ** 2 * 0.01
+        loss['flame_pose'] = self.pose_loss(flame_inputs['jaw_pose'], data['flame_param']['jaw_pose']) * 0.01
+        loss['flame_shape'] = (flame_inputs['shape'] - data['flame_param']['shape']) ** 2 * 0.01
+        loss['flame_expr'] = (flame_inputs['expr'] - data['flame_param']['expr']) ** 2 * 0.01
 
-            is_not_neck = torch.ones((1,flame.vertex_num,1)).float().cuda()
-            is_not_neck[:,flame.layer.lbs_weights.argmax(1)==flame.joint['root_idx'],:] = 0
-            loss['smplx_to_flame_v2v_wo_pose_expr'] = torch.abs(\
-                    (smplx_mesh_wo_pose_wo_expr[:,smpl_x.face_vertex_idx,:] - smplx_mesh_wo_pose_wo_expr[:,smpl_x.face_vertex_idx,:].mean(1)[:,None,:]) - \
-                    (flame_mesh_wo_pose_wo_expr - flame_mesh_wo_pose_wo_expr.mean(1)[:,None,:]).detach()) * is_not_neck * 10
-            loss['smplx_to_flame_lap'] = self.lap_reg(smplx_mesh_wo_pose_wo_expr[:,smpl_x.face_vertex_idx,:], flame_mesh_wo_pose_wo_expr.detach()) * is_not_neck * 100000
+        is_not_neck = torch.ones((1,flame.vertex_num,1)).float().cuda()
+        is_not_neck[:,flame.layer.lbs_weights.argmax(1)==flame.joint['root_idx'],:] = 0
+        loss['smplx_to_flame_v2v_wo_pose_expr'] = torch.abs(\
+                (smplx_mesh_wo_pose_wo_expr[:,smpl_x.face_vertex_idx,:] - smplx_mesh_wo_pose_wo_expr[:,smpl_x.face_vertex_idx,:].mean(1)[:,None,:]) - \
+                (flame_mesh_wo_pose_wo_expr - flame_mesh_wo_pose_wo_expr.mean(1)[:,None,:]).detach()) * is_not_neck * 10
+        loss['smplx_to_flame_lap'] = self.lap_reg(smplx_mesh_wo_pose_wo_expr[:,smpl_x.face_vertex_idx,:], flame_mesh_wo_pose_wo_expr.detach()) * is_not_neck * 100000
 
-            is_neck = torch.zeros((1,flame.vertex_num,1)).float().cuda()
-            is_neck[:,flame.layer.lbs_weights.argmax(1)==flame.joint['root_idx'],:] = 1
-            loss['face_offset_reg'] = smplx_inputs['face_offset'] ** 2 * is_neck * 1000
-            weight = torch.ones((1,smpl_x.joint['num'],1)).float().cuda()
-            if not cfg.hand_joint_offset:
-                weight[:,smpl_x.joint['part_idx']['lhand'],:] = 10
-                weight[:,smpl_x.joint['part_idx']['rhand'],:] = 10
-            loss['joint_offset_reg'] = smplx_inputs['joint_offset'] ** 2 * 100 * weight
-            loss['face_offset_sym_reg'] = self.face_offset_sym_reg(smplx_inputs['face_offset'])
-            loss['joint_offset_sym_reg'] = self.joint_offset_sym_reg(smplx_inputs['joint_offset'])
+        is_neck = torch.zeros((1,flame.vertex_num,1)).float().cuda()
+        is_neck[:,flame.layer.lbs_weights.argmax(1)==flame.joint['root_idx'],:] = 1
+        loss['face_offset_reg'] = smplx_inputs['face_offset'] ** 2 * is_neck * 1000
+        weight = torch.ones((1,smpl_x.joint['num'],1)).float().cuda()
+        loss['joint_offset_reg'] = smplx_inputs['joint_offset'] ** 2 * 100 * weight
+        loss['face_offset_sym_reg'] = self.face_offset_sym_reg(smplx_inputs['face_offset'])
+        loss['joint_offset_sym_reg'] = self.joint_offset_sym_reg(smplx_inputs['joint_offset'])
         
         if not return_output:
             return loss, None
@@ -392,22 +385,20 @@ class Model_wo_id_opt(nn.Module):
         # loss functions
         loss = {}
         weight = torch.ones_like(smplx_kpt_proj)
-        if not cfg.warmup:
-            weight[:,[i for i in range(smpl_x.kpt['num']) if 'Face' in smpl_x.kpt['name'][i]],:] = 0
-            weight[face_valid,:,:] = 1 # do not use 2D loss if face is not visible
+        weight[:,[i for i in range(smpl_x.kpt['num']) if 'Face' in smpl_x.kpt['name'][i]],:] = 0
+        weight[face_valid,:,:] = 1 # do not use 2D loss if face is not visible
         loss['smplx_kpt_proj'] = self.coord_loss(smplx_kpt_proj, data['kpt_img'], data['kpt_valid'], smplx_kpt_cam.detach()) * weight
-        if not cfg.warmup:
-            if cfg.use_depthmap_loss:
-                # rasterize depth map and compute depthmap loss
-                depth = rasterize_xy(smplx_mesh_cam, smpl_x.face, data['cam_param_depth'], cfg.depth_render_shape).zbuf[:,None,:,:,0]
-                loss['depth'] = self.depth_loss(depth, data['depth']) * 0.01
-            loss['smplx_mesh'] = torch.abs((smplx_mesh_cam - smplx_kpt_cam[:,smpl_x.kpt['root_idx'],None,:]) - \
-                                            (smplx_mesh_cam_init - smplx_kpt_cam_init[:,smpl_x.kpt['root_idx'],None,:])) * 0.1 
-            smplx_input_pose = self.get_smplx_full_pose(smplx_inputs)
-            smplx_init_pose = self.get_smplx_full_pose(data['smplx_param'])
-            loss['smplx_pose'] = self.pose_loss(smplx_input_pose, smplx_init_pose) * 0.1
-            loss['smplx_pose_reg'] = self.pose_reg(smplx_input_pose)
-            loss['smplx_expr'] = torch.abs(smplx_inputs['expr'] - data['flame_param']['expr']) * 0.1
+        if cfg.use_depthmap_loss:
+            # rasterize depth map and compute depthmap loss
+            depth = rasterize_xy(smplx_mesh_cam, smpl_x.face, data['cam_param_depth'], cfg.depth_render_shape).zbuf[:,None,:,:,0]
+            loss['depth'] = self.depth_loss(depth, data['depth']) * 0.01
+        loss['smplx_mesh'] = torch.abs((smplx_mesh_cam - smplx_kpt_cam[:,smpl_x.kpt['root_idx'],None,:]) - \
+                                        (smplx_mesh_cam_init - smplx_kpt_cam_init[:,smpl_x.kpt['root_idx'],None,:])) * 0.1 
+        smplx_input_pose = self.get_smplx_full_pose(smplx_inputs)
+        smplx_init_pose = self.get_smplx_full_pose(data['smplx_param'])
+        loss['smplx_pose'] = self.pose_loss(smplx_input_pose, smplx_init_pose) * 0.1
+        loss['smplx_pose_reg'] = self.pose_reg(smplx_input_pose)
+        loss['smplx_expr'] = torch.abs(smplx_inputs['expr'] - data['flame_param']['expr']) * 0.1
         
         if not return_output:
             return loss, None

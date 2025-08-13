@@ -72,6 +72,12 @@ class Model(nn.Module):
         img_aux = img_aux + bg*(1-mask).detach()
         return img_aux
 
+    def render_img_geo_detach(self, asset, cam_param, render_shape, bg, mask):
+        asset_geo_detach = {k: v if k == 'rgb' else v.detach() for k,v in asset.items()}
+        img_geo_detach = self.gaussian_renderer(asset_geo_detach, render_shape, cam_param, bg=torch.zeros((3)).float().cuda())['img']
+        img_geo_detach = img_geo_detach + bg*(1-mask).detach()
+        return img_geo_detach
+
     def render_hand_img(self, asset, cam_param, render_shape):
         hand_img = []
         for hand_type in ('right', 'left'):
@@ -244,10 +250,10 @@ class Model(nn.Module):
         offsets = {'mean_offset': [], 'mean_offset_offset': []}
         renders = {'img': [], 'img_refined': [], 'mask': [], 'mask_refined': [], 'depth': [], 'depth_refined': [], 'normal': [], 'normal_refined': []}
         if mode == 'train':
-            renders['img_w_bg'], renders['img_refined_w_bg'], renders['img_w_albedo_bg'], renders['img_aux_w_bg'], renders['img_aux_refined_w_bg'] = [], [], [], [], []
+            renders['img_w_bg'], renders['img_refined_w_bg'], renders['img_w_albedo_bg'], renders['img_aux_w_bg'], renders['img_aux_refined_w_bg'], renders['img_w_bg_geo_detach'], renders['img_refined_w_bg_geo_detach'] = [], [], [], [], [], [], []
             renders['seg'], renders['seg_refined'] = [], []
             renders['img_hand'], renders['mask_hand'] = [], []
-            renders['mask_eye'], renders['img_face_init'], renders['mask_patch_face'], renders['patch_face'], renders['patch_face_aux'], renders['patch_face_init'] = [], [], [], [], [], []
+            renders['mask_eye'], renders['img_face_init'], renders['mask_patch_face'], renders['patch_face'], renders['patch_face_aux'], renders['patch_face_geo_detach'], renders['patch_face_init'] = [], [], [], [], [], [], []
             renders['boundary'], renders['boundary_refined'], renders['boundary_face'] = [], [], []
             mesh_renders = {'mask_hand': [], 'mask_patch_face': [], 'mask_eye': []}
        
@@ -295,6 +301,8 @@ class Model(nn.Module):
                 renders['img_w_albedo_bg'].append(img_render + data['albedo'][i]*(1-renders['mask'][-1]))
                 renders['img_aux_w_bg'].append(self.render_img_aux(asset, cam_param, render_shape, data['img'][i], renders['mask'][-1]))
                 renders['img_aux_refined_w_bg'].append(self.render_img_aux(asset_refined, cam_param, render_shape, data['img'][i], renders['mask_refined'][-1]))
+                renders['img_w_bg_geo_detach'].append(self.render_img_geo_detach(asset, cam_param, render_shape, data['img'][i], renders['mask'][-1]))
+                renders['img_refined_w_bg_geo_detach'].append(self.render_img_geo_detach(asset_refined, cam_param, render_shape, data['img'][i], renders['mask_refined'][-1]))
                 
                 # part segmentations
                 renders['seg'].append(self.render_seg(asset, cam_param, render_shape))
@@ -317,6 +325,7 @@ class Model(nn.Module):
                 renders['mask_patch_face'].append(self.render_face_mask(asset, cam_param_face, cfg.face_patch_shape))
                 renders['patch_face'].append(self.render_face_img(asset, cam_param_face, cfg.face_patch_shape, data['face_patch'][i], renders['mask_patch_face'][-1]))
                 renders['patch_face_aux'].append(self.render_face_img(asset, cam_param_face, cfg.face_patch_shape, data['face_patch'][i], renders['mask_patch_face'][-1], 'aux'))
+                renders['patch_face_geo_detach'].append(self.render_img_geo_detach(asset, cam_param_face, cfg.face_patch_shape, data['face_patch'][i], renders['mask_patch_face'][-1]))
                 renders['patch_face_init'].append(self.render_face_img(asset, cam_param_face, cfg.face_patch_shape, data['face_patch'][i], renders['mask_patch_face'][-1], 'init'))
                 with torch.no_grad():
                     mesh_renders['mask_patch_face'].append(self.render_face_mesh(smplx_vert, cam_param_face, cfg.face_patch_shape).detach())
@@ -390,8 +399,8 @@ class Model(nn.Module):
             if is_generated.sum() > 0:
                 loss['img_aux_refined'] = self.img_loss(renders['img_aux_refined_w_bg'], data['img']) * is_generated
             if is_captured.sum() > 0:
-                loss['img_boundary'] = self.img_loss(renders['img_w_bg']*renders['boundary'], renders['img_aux_w_bg'].detach()*renders['boundary']) * is_captured
-                loss['img_boundary_refined'] = self.img_loss(renders['img_refined_w_bg']*renders['boundary_refined'], renders['img_aux_refined_w_bg'].detach()*renders['boundary_refined']) * is_captured
+                loss['img_boundary'] = self.img_loss(renders['img_w_bg_geo_detach']*renders['boundary'], renders['img_aux_w_bg'].detach()*renders['boundary']) * is_captured
+                loss['img_boundary_refined'] = self.img_loss(renders['img_refined_w_bg_geo_detach']*renders['boundary_refined'], renders['img_aux_refined_w_bg'].detach()*renders['boundary_refined']) * is_captured
 
             # geometry
             if not cfg.fit_pose_to_test:
@@ -412,7 +421,7 @@ class Model(nn.Module):
             if is_captured.sum() > 0:
                 weight = renders['boundary_face']*0.1 + (1 - renders['boundary_face'])
                 loss['patch_face'] = self.img_loss(renders['patch_face'], data['face_patch']) * weight * is_captured * 0.1
-                loss['patch_face_boundary'] = self.img_loss(renders['patch_face']*renders['boundary_face'], renders['patch_face_aux'].detach()*renders['boundary_face']) * is_captured * 0.1
+                loss['patch_face_boundary'] = self.img_loss(renders['patch_face_geo_detach']*renders['boundary_face'], renders['patch_face_aux'].detach()*renders['boundary_face']) * is_captured * 0.1
                 loss['patch_mask_face'] = torch.abs(renders['mask_patch_face'] - mesh_renders['mask_patch_face']) * is_captured * 0.1
                 loss['patch_face_geo'] = torch.abs(renders['patch_face_init'] - data['face_patch']) * is_captured * 0.1
            

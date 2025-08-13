@@ -10,7 +10,7 @@ ${ROOT}
 |-- |-- subjects
 |-- |-- |-- $SUBJECT_NAME
 ```
-* `subjects` folder contains preprocessed data from [here](../preprocess/).
+* `subjects` folder contains preprocessed data from [../preprocess](../preprocess/).
 
 ## Prepare
 * Go to `tools/diffused_skinning_weights` and run `python make_skinning_weight.py` to prepare diffused skinning weights.
@@ -25,8 +25,9 @@ ${ROOT}
 * You can see a rotating avatar with the neutral pose in `./main/neutral_pose`.
 
 ## Animation
-* Go to `main` folder and run `python animation.py --subject_id $SUBJECT_ID --test_epoch 4 --motion_path $PATH` if you want to use an avatar in `output/model_dump/$SUBJECT_ID`. `$PATH` should contain SMPL-X parameters to animate the avatar. You can prepare `$PATH` with [here](../pose_track/).
+* Go to `main` folder and run `python animation.py --subject_id $SUBJECT_ID --test_epoch 4 --motion_path $PATH` if you want to use an avatar in `output/model_dump/$SUBJECT_ID`. `$PATH` should contain SMPL-X parameters to animate the avatar. You can prepare `$PATH` with [../pose_track](../pose_track).
 * We provide SMPL-X parameters of several videos (examples of `$PATH`) in [here](https://drive.google.com/drive/folders/1uSdCSUAihk96iaXnGPyjvAzpZWyZNXFs?usp=sharing).
+* You can enable `--use_bkg` option to use background frames. To obtain bakground frames, go to [../pose_track](../pose_track)
 
 ## Test and evaluation (NeuMan and X-Humans datasets)
 * For the evaluation, we optimize SMPL-X paraemeters of testing frames with image loss while fixing the pre-trained avatars following [1](https://github.com/aipixel/GaussianAvatar/issues/14), [2](https://github.com/mikeqzy/3dgs-avatar-release/issues/21), and [Section 4 B Evaluation](https://arxiv.org/pdf/2106.13629). This is specified in [here]().
@@ -37,7 +38,7 @@ ${ROOT}
 * For the evaluation of the X-Humans dataset, go to `tools` folder and run `python eval_xhumans.py --output_path '../output/result/$SUBJECT_ID' + '_fit_pose_to_test' --subject_id $SUBJECT_ID`.
 
 ## Pre-trained avatars
-* [Download]()
+* [Download](https://drive.google.com/drive/folders/1J0z0HBEYB03r9svgpeLO2AqAvV1YAzRk?usp=sharing)
 
 ## Reference
 ```

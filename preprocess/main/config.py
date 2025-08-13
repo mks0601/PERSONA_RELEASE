@@ -12,6 +12,10 @@ class Config:
     lr_dec_factor = 10
     body_3d_size = 2 # meter
     batch_size = 256
+    itr_opt_num = 250
+    lr = 1e-2
+    lr_dec_itr = [100]
+    stage_itr = [100]
     end_epoch = 3
 
     ## others
@@ -36,37 +40,11 @@ class Config:
         self.result_dir = osp.join(self.result_dir, subject_id)
         os.makedirs(self.result_dir, exist_ok=True)
  
-    def set_itr_opt_num(self, epoch):
-        if epoch == 0:
-            self.itr_opt_num = 500
+    def set_stage(self, itr):
+        if itr < self.stage_itr[0]:
+            self.use_depthmap_loss = False
         else:
-            self.itr_opt_num = 250
-
-    def set_stage(self, epoch, itr):
-        if epoch == 0:
-            self.lr = 1e-1
-            self.lr_dec_itr = [100, 250]
-            self.stage_itr = [100, 250]
-            if itr < self.stage_itr[0]:
-                self.warmup = True
-                self.hand_joint_offset = False
-                self.use_depthmap_loss = False
-            elif itr < self.stage_itr[1]:
-                self.warmup = False
-                self.hand_joint_offset = False
-                self.use_depthmap_loss = False
-            else:
-                self.warmup = False
-                self.hand_joint_offset = True
-                self.use_depthmap_loss = True
-        else:
-            self.lr = 1e-2
-            self.lr_dec_itr = [100]
-            self.stage_itr = [100]
-            if itr < self.stage_itr[0]:
-                self.use_depthmap_loss = False
-            else:
-                self.use_depthmap_loss = True
+            self.use_depthmap_loss = True
 
 cfg = Config()
 

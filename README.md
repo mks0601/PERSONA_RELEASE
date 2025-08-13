@@ -5,12 +5,21 @@
 * PERSONA is a personalized whole-body animatable avatar creation system that supports pose-driven deformations (*i.e.*, non-rigid deformations of clothes) from a single image.
 
 <p align="middle">
-<img src="assets/teaser_compressed.gif" width="960" height="400">
+<img src="assets/comparison_3d.gif" width="960" height="400">
 </p>
 <p align="center">
-Yes, it's me, Gyeongsik in the video :), taken in front of my apartment with my mobile phone.
+Compared to previous 3D-based methods, our PERSONA better represents non-rigid deformations of clothes.
 For more high-resolution demo videos, please visit our <A href="https://mks0601.github.io/PERSONA">website</A>.
 </p>
+
+<p align="middle">
+<img src="assets/comparison_gen.gif" width="960" height="400">
+</p>
+<p align="center">
+Compared to previous diffusion-based methods, our PERSONA better preserves identity of the person.
+For more high-resolution demo videos, please visit our <A href="https://mks0601.github.io/PERSONA">website</A>.
+</p>
+
 
 ## Install
 * To install a conda environment and necessary packages, run below.
@@ -20,19 +29,19 @@ conda activate persona
 pip install -r requirements.txt
 ```
 
-* Also, to download and install third-party modules, first, please get granted to access [SVD](https://huggingface.co/stabilityai/stable-video-diffusion-img2vid-xt-1-1).
-* Then, login HuggingFace on your machine.
+* Also, to download and install third-party modules, first, please get granted to access [SVD](https://huggingface.co/stabilityai/stable-video-diffusion-img2vid-xt-1-1) and [sapiens pose](https://huggingface.co/noahcao/sapiens-pose-coco).
+* Then, login HuggingFace on your machine by running `huggingface-cli login`.
 * Finally, run below.
 ```
 bash install.sh
 ```
 
 ## Creating and animating avatars from a single image
-1. To create an avatar, you first need to fit SMPL-X to an image and generate training videos. Go to [here](./preprocess/).
-2. Then, go to [here](./avatar) to create and animate the avatar.
+1. To create an avatar, you first need to fit SMPL-X to an image and generate training videos. Go to [./preprocess](./preprocess/).
+2. Then, go to [./avatar](./avatar) to create and animate the avatar.
 
 ## Tracking 3D whole-body poses from a video
-* To animate your avatar, you need to track 3D whole-body poses from a video. Go to [here](./pose_track/).
+* To animate your avatar, you need to track 3D whole-body poses from a video. Go to [./pose_track](./pose_track).
 
 ## Reference
 ```

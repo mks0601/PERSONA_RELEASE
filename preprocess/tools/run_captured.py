@@ -20,14 +20,6 @@ else:
     subject_id = root_path.split('/')[-1]
 root_path = osp.join(root_path, 'captured')
 
-# make camera parameters
-cmd = 'python make_virtual_cam_params.py --root_path ' + root_path
-print(cmd)
-result = os.system(cmd)
-if (result != 0):
-    print('something bad happened when making virtual camera parameters (run_captured.py). terminate the script.')
-    sys.exit()
-
 # DECA (get initial FLAME parameters)
 os.chdir(osp.join(cur_path, 'DECA'))
 cmd = 'python run_deca.py --root_path ' + root_path
@@ -38,14 +30,16 @@ if (result != 0):
     sys.exit()
 os.chdir(cur_path)
 
-# Hand4Whole (get initial SMPLX parameters)
-os.chdir(osp.join(cur_path, 'Hand4Whole_RELEASE/demo'))
-cmd = 'python run_hand4whole.py --gpu 0 --root_path ' + root_path + ' --vis_format image'
-print(cmd)
+# SMPLest-X (get initial SMPLX parameters)
+os.chdir(osp.join(cur_path, 'SMPLest-X'))
+cmd = 'python main/inference.py --root_path ' + root_path + ' --data_format image' 
 result = os.system(cmd)
 if (result != 0):
-    print('something bad happened when running Hand4Whole (run_captured.py). terminate the script.')
+    print('something bad happened when running SMPLest-X. terminate the script.')
     sys.exit()
+os.system('mv ' + osp.join(root_path, 'smplx') + ' ' + osp.join(root_path, 'smplx_init'))
+os.system('mv ' + osp.join(root_path, 'smplx_init', 'params', '*') + ' ' + osp.join(root_path, 'smplx_init', '.'))
+os.system('rm -rf ' + osp.join(root_path, 'smplx_init', 'params'))
 os.chdir(cur_path)
 
 # sapiens (keypoints)

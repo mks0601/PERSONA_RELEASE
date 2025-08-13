@@ -56,24 +56,14 @@ def main():
         joint_offset = torch.FloatTensor(json.load(f)).cuda().view(-1,3)
 
     for epoch in range(cfg.end_epoch):
-        cfg.set_itr_opt_num(epoch)
-
         for itr_data, data in enumerate(trainer.batch_generator):
             batch_size = data['kpt_img'].shape[0]
 
             for itr_opt in range(cfg.itr_opt_num):
-                cfg.set_stage(epoch, itr_opt)
+                cfg.set_stage(itr_opt)
 
                 # optimizer
-                if (epoch == 0) and (itr_opt == 0):
-                    # smplx root pose and translatioin
-                    optimizable_params = []
-                    for frame_idx in data['frame_idx']:
-                        for key in ['root_pose', 'trans']:
-                            optimizable_params.append(smplx_params[int(frame_idx)][key])
-                    trainer.get_optimizer(optimizable_params)
-                elif ((epoch == 0) and (itr_opt == cfg.stage_itr[0])) or ((epoch > 0) and (itr_opt == 0)):
-                    # all parameters
+                if itr_opt == 0:
                     optimizable_params = [] 
                     for frame_idx in data['frame_idx']:
                         for key in ['root_pose', 'body_pose', 'jaw_pose', 'leye_pose', 'reye_pose', 'lhand_pose', 'rhand_pose', 'expr', 'trans']: 

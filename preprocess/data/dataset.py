@@ -27,7 +27,6 @@ class Dataset(torch.utils.data.Dataset):
                         'R_Wrist_Hand', 'R_Thumb_1', 'R_Thumb_2', 'R_Thumb_3', 'R_Thumb_4', 'R_Index_1', 'R_Index_2', 'R_Index_3', 'R_Index_4', 'R_Middle_1', 'R_Middle_2', 'R_Middle_3', 'R_Middle_4', 'R_Ring_1', 'R_Ring_2', 'R_Ring_3', 'R_Ring_4', 'R_Pinky_1', 'R_Pinky_2', 'R_Pinky_3', 'R_Pinky_4') # right hand
                     }
         self.cam_params, self.kpts, self.depth_paths, self.smplx_params, self.flame_params, self.flame_shape_param, self.frame_idx_list = self.load_data()
-        self.get_smplx_trans_init() # get initial smplx translation 
         self.get_flame_root_init() # get initial flame root pose and translation
 
     def load_data(self):
@@ -102,26 +101,6 @@ class Dataset(torch.utils.data.Dataset):
 
         frame_idx_list = [int(x) for x in cam_params.keys()]
         return cam_params, kpts, depth_paths, smplx_params, flame_params, flame_shape_param, frame_idx_list
-
-    def get_smplx_trans_init(self):
-        for i in range(len(self.frame_idx_list)):
-            frame_idx = self.frame_idx_list[i]
-            focal, princpt = self.cam_params[frame_idx]['focal'], self.cam_params[frame_idx]['princpt'].copy()
-
-            kpt = self.kpts[frame_idx]
-            kpt_img = kpt[:,:2]
-            kpt_valid = (kpt[:,2:] > 0.5).astype(np.float32)
-            bbox = get_bbox(kpt_img, kpt_valid[:,0])
-            bbox = set_aspect_ratio(bbox, aspect_ratio=cfg.kpt_proj_shape[1]/cfg.kpt_proj_shape[0])
-            
-            # get the root translation in the camera coordinate system
-            t_z = math.sqrt(focal[0]*focal[1]*cfg.body_3d_size*cfg.body_3d_size/(bbox[2]*bbox[3])) # meter
-            t_x = bbox[0] + bbox[2]/2 # pixel
-            t_y = bbox[1] + bbox[3]/2 # pixel
-            t_x = (t_x - princpt[0]) / focal[0] * t_z # meter
-            t_y = (t_y - princpt[1]) / focal[1] * t_z # meter
-            t_xyz = torch.FloatTensor([t_x, t_y, t_z]) 
-            self.smplx_params[frame_idx]['trans'] = t_xyz
 
     def get_flame_root_init(self):
         for i in range(len(self.frame_idx_list)):
