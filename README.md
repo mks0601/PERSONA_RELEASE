@@ -1,6 +1,6 @@
 # PERSONA (ICCV 2025)
 
-## [Project Page](https://mks0601.github.io/PERSONA) | [Paper](https://mks0601.github.io/PERSONA) | [Video](https://www.youtube.com/watch?v=goQGvU_AwiU) 
+## [Project Page](https://mks0601.github.io/PERSONA) | [Paper](https://arxiv.org/abs/2508.09973) | [Video](https://www.youtube.com/watch?v=goQGvU_AwiU) 
 
 * PERSONA is a personalized whole-body animatable avatar creation system that supports pose-driven deformations (*i.e.*, non-rigid deformations of clothes) from a single image.
 
