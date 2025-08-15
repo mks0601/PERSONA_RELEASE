@@ -14,16 +14,16 @@ import argparse
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--output_path', type=str, dest='output_path')
-    parser.add_argument('--subject_id', type=str, dest='subject_id')
     args = parser.parse_args()
     assert args.output_path, "Please set output_path."
-    assert args.subject_id, "Please set subject_id."
     return args
 
 # get path
 args = parse_args()
 output_path = args.output_path
-subject_id = args.subject_id
+if output_path[-1] == '/':
+    output_path = output_path[:-1]
+subject_id = output_path.split('/')[-1].split('_fit_pose_to_test')[0] # ../output/result/bike_fit_pose_to_test -> bike
 data_root_path = osp.join('..', 'data', 'subjects', subject_id, 'test')
 
 results = {'psnr': [], 'ssim': [], 'lpips': []}
