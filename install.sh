@@ -59,8 +59,10 @@ wget https://github.com/mks0601/PERSONA_RELEASE/releases/download/1.0/motion_1.z
 mv motion_0.zip ../preprocess/tools/prepare_training_video_generation/.
 mv motion_1.zip ../preprocess/tools/prepare_training_video_generation/.
 pushd ../preprocess/tools/prepare_training_video_generation/
-unzip motion_0.zip
-unzip motion_1.zip
+unzip -o motion_0.zip
+unzip -o motion_1.zip
+rm -f motion_0.zip
+rm -f motion_1.zip
 popd  # Return to third_modules
 
 # ===== 7. segment-anything =====
