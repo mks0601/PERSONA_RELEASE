@@ -57,6 +57,8 @@ ${ROOT}
 * [Gyeongsik](https://drive.google.com/file/d/1Pbt6BL-trSFGEBGL6xGCa3q47TSlky5T/view?usp=sharing).
 * [Loose clothing 1](https://drive.google.com/file/d/1gRES16bj4-qi6aBZvq_PX4A4oGxeYjxe/view?usp=sharing).
 * [Loose_clothing_2](https://drive.google.com/file/d/1edZh7LvoLAHjtlWagJCE-cxb77irh78d/view?usp=sharing).
+* [`captured` of NeuMan dataset](https://drive.google.com/drive/folders/1iOFJ5L811mXm5Am8_9qGdPJVHC7fbMw0?usp=sharing).
+* [`captured` of X-Humans dataset](https://drive.google.com/drive/folders/1zFI8Ibp4-MgWccRtDPP4xBjXmL9iVv_X?usp=sharing).
 
 ## Reference
 ```
