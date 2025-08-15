@@ -43,10 +43,10 @@ echo "Downloading MimicMotion..."
 wget https://github.com/mks0601/PERSONA_RELEASE/releases/download/1.0/MimicMotion.zip
 unzip -o MimicMotion.zip
 rm -f MimicMotion.zip
-mkdir -p models/DWPose
-wget https://huggingface.co/yzd-v/DWPose/resolve/main/yolox_l.onnx?download=true -O models/DWPose/yolox_l.onnx
-wget https://huggingface.co/yzd-v/DWPose/resolve/main/dw-ll_ucoco_384.onnx?download=true -O models/DWPose/dw-ll_ucoco_384.onnx
-wget -P models/ https://huggingface.co/tencent/MimicMotion/resolve/main/MimicMotion_1-1.pth
+mkdir -p MimicMotion/models/DWPose
+wget https://huggingface.co/yzd-v/DWPose/resolve/main/yolox_l.onnx?download=true -O MimicMotion/models/DWPose/yolox_l.onnx
+wget https://huggingface.co/yzd-v/DWPose/resolve/main/dw-ll_ucoco_384.onnx?download=true -O MimicMotion/models/DWPose/dw-ll_ucoco_384.onnx
+wget -P MimicMotion/models/ https://huggingface.co/tencent/MimicMotion/resolve/main/MimicMotion_1-1.pth
 huggingface-cli download \
   stabilityai/stable-video-diffusion-img2vid-xt-1-1 \
   --repo-type model \
