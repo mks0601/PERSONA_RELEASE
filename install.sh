@@ -54,8 +54,8 @@ huggingface-cli download \
   --local-dir MimicMotion/models/SVD \
   --local-dir-use-symlinks False \
   --resume-download
-wget https://github.com/mks0601/PERSONA_RELEASE/releases/download/untagged-7d04ffac1bfb95ed7960/motion_0.zip
-wget https://github.com/mks0601/PERSONA_RELEASE/releases/download/untagged-7d04ffac1bfb95ed7960/motion_1.zip
+wget https://github.com/mks0601/PERSONA_RELEASE/releases/download/1.0/motion_0.zip
+wget https://github.com/mks0601/PERSONA_RELEASE/releases/download/1.0/motion_1.zip
 mv motion_0.zip ../preprocess/tools/prepare_training_video_generation/.
 mv motion_1.zip ../preprocess/tools/prepare_training_video_generation/.
 pushd ../preprocess/tools/prepare_training_video_generation/
