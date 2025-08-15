@@ -377,7 +377,7 @@ class Model_wo_id_opt(nn.Module):
         smplx_init_pose = self.get_smplx_full_pose(data['smplx_param'])
         loss['smplx_pose'] = self.pose_loss(smplx_input_pose, smplx_init_pose) * 0.1
         loss['smplx_pose_reg'] = self.pose_reg(smplx_input_pose)
-        loss['smplx_expr'] = torch.abs(smplx_inputs['expr'] - data['flame_param']['expr']) * 0.1
+        loss['smplx_expr'] = (smplx_inputs['expr'] - data['flame_param']['expr']) ** 2 * 0.01
         
         if not return_output:
             return loss, None
