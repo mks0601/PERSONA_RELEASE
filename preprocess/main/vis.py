@@ -50,11 +50,11 @@ def main():
         cv2.imwrite(osp.join(save_root_path, 'renders', str(frame_idx) + '.jpg'), render)
 
         # render flame mesh
-        mesh_path = osp.join(save_root_path, 'meshes', str(frame_idx) + '_flame.ply')
-        vert, face = load_ply(mesh_path)
-        render = render_mesh(vert.numpy(), flame.face, {'focal': cam_param['focal'], 'princpt': cam_param['princpt']}, img, 1.0)
-        cv2.imwrite(osp.join(save_root_path, 'renders', str(frame_idx) + '_flame.jpg'), render)
-
+        if args.split == 'captured':
+            mesh_path = osp.join(save_root_path, 'meshes', str(frame_idx) + '_flame.ply')
+            vert, face = load_ply(mesh_path)
+            render = render_mesh(vert.numpy(), flame.face, {'focal': cam_param['focal'], 'princpt': cam_param['princpt']}, img, 1.0)
+            cv2.imwrite(osp.join(save_root_path, 'renders', str(frame_idx) + '_flame.jpg'), render)
 
 if __name__ == "__main__":
     main()
