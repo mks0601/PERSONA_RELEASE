@@ -29,6 +29,7 @@ ${ROOT}
 * If you want only partial frames from videos, you can optionally save `valid_frame_list.txt` with your desired frame indices with newline for each frame index. For example, if you want 0th, 1st, 2nd, and 100th frames, `valid_frame_list.txt` should include `0\n1\n2\n100\n`.
 
 ## Start
+* Run `export CUDA_VISIBLE_DEVICES=$GPU_ID` where `$GPU_ID` is your desired GPU index.
 * (Optional) If you want to specify bbox of the person in the first frame, prepare `$ROOT/data/subjects/$SUBJECT_NAME/bboxes/$FRAME_IDX.json` where `$FRAME_IDX` is the first frame index (e.g., 0). The json file should include [xmin, ymin, width, height].
 * Run `python run.py --root_path $PATH --data_format $DATA_FORMAT`.
 * `$PATH` is an **absolute path**. An example of `$PATH` of above directory is `$ROOT/data/subjects/$SUBJECT_NAME`.
