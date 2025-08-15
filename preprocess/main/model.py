@@ -346,20 +346,6 @@ class Model_wo_id_opt(nn.Module):
         else:
              return mesh_cam, kpt_cam, root_cam
 
-    def check_face_visibility(self, face_mesh, leye, reye):
-        center = face_mesh.mean(1)
-        eye = (leye + reye)/2.
-
-        eye_vec = eye - center
-        cam_vec = center - 0
-
-        eye_vec = F.normalize(torch.stack((eye_vec[:,0], eye_vec[:,2]),1), p=2, dim=1)
-        cam_vec = F.normalize(torch.stack((cam_vec[:,0], cam_vec[:,2]),1), p=2, dim=1)
-
-        dot_prod = torch.sum(eye_vec * cam_vec, 1)
-        face_valid = dot_prod < math.cos(math.pi/4*3)
-        return face_valid
-
     def get_smplx_full_pose(self, smplx_param):
         pose = torch.cat((smplx_param['root_pose'][:,None,:], smplx_param['body_pose'], smplx_param['jaw_pose'][:,None,:], smplx_param['leye_pose'][:,None,:], smplx_param['reye_pose'][:,None,:], smplx_param['lhand_pose'], smplx_param['rhand_pose']),1) # follow smpl_x.joint['name']
         return pose
@@ -378,16 +364,9 @@ class Model_wo_id_opt(nn.Module):
             data['smplx_param']['joint_offset'] = smplx_inputs['joint_offset'].clone().detach()
             smplx_mesh_cam_init, smplx_kpt_cam_init, _, _ = self.get_smplx_coord(data['smplx_param'], data['cam_param_kpt'], use_face_offset=False)
 
-            # check face visibility
-            face_valid = self.check_face_visibility(smplx_mesh_cam_init[:,smpl_x.face_vertex_idx,:], smplx_kpt_cam_init[:,smpl_x.kpt['name'].index('L_Eye'),:], smplx_kpt_cam_init[:,smpl_x.kpt['name'].index('R_Eye'),:])
-            face_valid = face_valid * data['flame_valid']
-
         # loss functions
         loss = {}
-        weight = torch.ones_like(smplx_kpt_proj)
-        weight[:,[i for i in range(smpl_x.kpt['num']) if 'Face' in smpl_x.kpt['name'][i]],:] = 0
-        weight[face_valid,:,:] = 1 # do not use 2D loss if face is not visible
-        loss['smplx_kpt_proj'] = self.coord_loss(smplx_kpt_proj, data['kpt_img'], data['kpt_valid'], smplx_kpt_cam.detach()) * weight
+        loss['smplx_kpt_proj'] = self.coord_loss(smplx_kpt_proj, data['kpt_img'], data['kpt_valid'], smplx_kpt_cam.detach())
         if cfg.use_depthmap_loss:
             # rasterize depth map and compute depthmap loss
             depth = rasterize_xy(smplx_mesh_cam, smpl_x.face, data['cam_param_depth'], cfg.depth_render_shape).zbuf[:,None,:,:,0]
