@@ -30,7 +30,7 @@ ${ROOT}
 * You can enable `--use_bkg` option to use background frames. To obtain bakground frames, go to [../pose_track](../pose_track)
 
 ## Test and evaluation (NeuMan and X-Humans datasets)
-* For the evaluation, we optimize SMPL-X paraemeters of testing frames with image loss while fixing the pre-trained avatars following [1](https://github.com/aipixel/GaussianAvatar/issues/14), [2](https://github.com/mikeqzy/3dgs-avatar-release/issues/21), and [Section 4 B Evaluation](https://arxiv.org/pdf/2106.13629). This is specified in [here]().
+* For the evaluation, we optimize SMPL-X paraemeters of testing frames with image loss while fixing the pre-trained avatars following [1](https://github.com/aipixel/GaussianAvatar/issues/14), [2](https://github.com/mikeqzy/3dgs-avatar-release/issues/21), and [Section 4 B Evaluation](https://arxiv.org/pdf/2106.13629). This is specified in [here](https://github.com/mks0601/PERSONA_RELEASE/blob/83bec03d407bb2fc9ab9d436fb7acb21afbeb731/avatar/main/model.py#L31).
 * Go to `tools` folder and run `python prepare_fit_pose_to_test.py --root_path ../output/model_dump/$SUBJECT_ID` if you want to use an avatar in `output/model_dump/$SUBJECT_ID`. It simply sets `epoch` of a checkpoint to 0 and save it to `'output/model_dump/$SUBJECT_ID' + '_fit_pose_to_test'`.
 * Go to `main` folder and run `python train.py --subject_id $SUBJECT_ID --fit_pose_to_test --continue`.
 * You can see test results on the testing frames by running `python test.py --subject_id $SUBJECT_ID --fit_pose_to_test --test_epoch 4`. The results are saved to `'output/result/$SUBJECT_ID' + '_fit_pose_to_test'`.
