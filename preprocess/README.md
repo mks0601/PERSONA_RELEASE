@@ -18,15 +18,18 @@ ${ROOT}
 
 ## 1. Preprocess `captured` data (necessary to create avatars)
 * Go to `tools` folder.
+* Run `export CUDA_VISIBLE_DEVICES=$GPU_ID` where `$GPU_ID` is your desired GPU index.
 * Run `python run_captured.py --root_path $ROOT_PATH`, where `$ROOT_PATH` is an **absolute path** to the subject. In the case of above directory, `$ROOT_PATH` is `$ROOT/data/subjects/$SUBJECT_NAME`.
 
 ## 2. Preprocess `generated` data (necessary to create avatars)
 * Go to `tools` folder.
+* Run `export CUDA_VISIBLE_DEVICES=$GPU_ID` where `$GPU_ID` is your desired GPU index. 
 * Run `python run_generated.py --root_path $ROOT_PATH`, where `$ROOT_PATH` is an **absolute path** to the subject. In the case of above directory, `$ROOT_PATH` is `$ROOT/data/subjects/$SUBJECT_NAME`.
 
 ## 3. Preprocess `test` data (only for quantitative evaluations of NeuMan and X-Humans datasets)
 * Download original dataset from [NeuMan](https://github.com/apple/ml-neuman?tab=readme-ov-file) and [X-Humans](https://skype-line.github.io/projects/X-Avatar/).
 * Official training/testing split files of `NeuMan` dataset is available in [here](https://drive.google.com/drive/folders/1QJztYKjI9tC90U6mELwt-RF1V09LBqjW?usp=sharing). Save this to each subject folder of the original dataset.
+* Run `export CUDA_VISIBLE_DEVICES=$GPU_ID` where `$GPU_ID` is your desired GPU index.
 * Go to `tools/NeuMan` or `tools/XHumans` folder and run `python prepare_captured_test_imgs.py --root_path $DB_PATH --save_path $ROOT/data/subjects/$SUBJECT_NAME --split test` where `$DB_PATH` represents the original dataset path.
 * Then, you can get below directory.
 ```
