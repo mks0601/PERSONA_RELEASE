@@ -39,8 +39,8 @@ ${ROOT}
 * Go to `tools` folder and run `python prepare_fit_pose_to_test.py --root_path ../output/model_dump/$SUBJECT_ID` if you want to use an avatar in `output/model_dump/$SUBJECT_ID`. It simply sets `epoch` of a checkpoint to 0 and save it to `'output/model_dump/$SUBJECT_ID' + '_fit_pose_to_test'`.
 * Go to `main` folder and run `python train.py --subject_id $SUBJECT_ID --fit_pose_to_test --continue`.
 * You can see test results on the testing frames by running `python test.py --subject_id $SUBJECT_ID --fit_pose_to_test --test_epoch 4`. The results are saved to `'output/result/$SUBJECT_ID' + '_fit_pose_to_test'`.
-* For the evaluation of the NeuMan dataset, go to `tools` folder and run `python eval_neuman.py --output_path '../output/result/$SUBJECT_ID' + '_fit_pose_to_test' --subject_id $SUBJECT_ID`.
-* For the evaluation of the X-Humans dataset, go to `tools` folder and run `python eval_xhumans.py --output_path '../output/result/$SUBJECT_ID' + '_fit_pose_to_test' --subject_id $SUBJECT_ID`.
+* For the evaluation of the NeuMan dataset, go to `tools` folder and run `python eval_neuman.py --output_path '../output/result/$SUBJECT_ID' + '_fit_pose_to_test'`.
+* For the evaluation of the X-Humans dataset, go to `tools` folder and run `python eval_xhumans.py --output_path '../output/result/$SUBJECT_ID' + '_fit_pose_to_test'`.
 
 ## Pre-trained avatars
 * [Download](https://drive.google.com/drive/folders/1J0z0HBEYB03r9svgpeLO2AqAvV1YAzRk?usp=sharing)
