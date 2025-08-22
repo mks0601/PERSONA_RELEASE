@@ -16,3 +16,14 @@
 *.pt
 *.npy
 *.json
+third_modules/DECA
+third_modules/Hand4Whole_RELEASE
+third_modules/human_model_files
+third_modules/Intrinsic
+third_modules/MimicMotion
+third_modules/mip-splatting
+third_modules/ResShift
+third_modules/sam2
+third_modules/sapiens
+third_modules/segment-anything
+third_modules/SMPLest-X
