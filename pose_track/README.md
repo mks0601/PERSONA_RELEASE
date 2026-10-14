@@ -37,7 +37,7 @@ ${ROOT}
 * Tracking results are saved in `$ROOT/data/subjects/$SUBJECT_NAME`.
 
 ## Tracked poses examples
-* [Download](https://drive.google.com/drive/folders/1uSdCSUAihk96iaXnGPyjvAzpZWyZNXFs?usp=sharing)
+* [Download](https://1drv.ms/f/c/3971ed61d3817b59/IgAqoYKO18JYTpASvJ2kGK4rAemYxtvCny8vZjA1U7VCyMw)
 
 ## Reference
 ```
