@@ -30,7 +30,7 @@ ${ROOT}
 ## Animation
 * Run `export CUDA_VISIBLE_DEVICES=$GPU_ID` where `$GPU_ID` is your desired GPU index.
 * Go to `main` folder and run `python animation.py --subject_id $SUBJECT_ID --test_epoch 4 --motion_path $PATH` if you want to use an avatar in `output/model_dump/$SUBJECT_ID`. `$PATH` should contain SMPL-X parameters to animate the avatar. You can prepare `$PATH` with [../pose_track](../pose_track).
-* We provide SMPL-X parameters of several videos (examples of `$PATH`) in [here](https://drive.google.com/drive/folders/1uSdCSUAihk96iaXnGPyjvAzpZWyZNXFs?usp=sharing).
+* We provide SMPL-X parameters of several videos (examples of `$PATH`) in [here](https://1drv.ms/f/c/3971ed61d3817b59/IgAqoYKO18JYTpASvJ2kGK4rAemYxtvCny8vZjA1U7VCyMw?e=4MLjcE).
 * You can enable `--use_bkg` option to use background frames. To obtain bakground frames, go to [../pose_track](../pose_track)
 
 ## Test and evaluation (NeuMan and X-Humans datasets)
@@ -43,7 +43,7 @@ ${ROOT}
 * For the evaluation of the X-Humans dataset, go to `tools` folder and run `python eval_xhumans.py --output_path '../output/result/$SUBJECT_ID' + '_fit_pose_to_test'`.
 
 ## Pre-trained avatars
-* [Download](https://drive.google.com/drive/folders/1J0z0HBEYB03r9svgpeLO2AqAvV1YAzRk?usp=sharing)
+* [Download](https://1drv.ms/f/c/3971ed61d3817b59/IgBZuHGXNDjqTq6vKLB6UNcuAfLiFqh6-cY3Sod0IfKRUNY?e=RE1kgY)
 
 ## Reference
 ```
