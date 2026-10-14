@@ -58,11 +58,11 @@ ${ROOT}
 
 ## Preprocess examples
 * We provide an example of preprocessed data in below.
-* [Gyeongsik](https://drive.google.com/file/d/1Pbt6BL-trSFGEBGL6xGCa3q47TSlky5T/view?usp=sharing).
-* [Loose clothing 1](https://drive.google.com/file/d/1gRES16bj4-qi6aBZvq_PX4A4oGxeYjxe/view?usp=sharing).
-* [Loose_clothing_2](https://drive.google.com/file/d/1edZh7LvoLAHjtlWagJCE-cxb77irh78d/view?usp=sharing).
-* [`captured` of NeuMan dataset](https://drive.google.com/drive/folders/1iOFJ5L811mXm5Am8_9qGdPJVHC7fbMw0?usp=sharing).
-* [`captured` of X-Humans dataset](https://drive.google.com/drive/folders/1zFI8Ibp4-MgWccRtDPP4xBjXmL9iVv_X?usp=sharing).
+* [Gyeongsik](https://1drv.ms/u/c/3971ed61d3817b59/IQCoWfDnD27AR5qFYJc1REe0Ab6TXIDGuK6crE1EaIGiaVE?e=cD84f8).
+* [Loose clothing 1](https://1drv.ms/u/c/3971ed61d3817b59/IQAHbQgEcsaUT6rx7JDaQ593ASSbKA_l-w4eiyda4vX-Cyo?e=JOwe2i).
+* [Loose_clothing_2](https://1drv.ms/u/c/3971ed61d3817b59/IQBI84D0Xd8qQIgOo8yUAP5YAfDriy1rRGvioCbSEwHNGo4?e=Z2VB3W).
+* [`captured` of NeuMan dataset](https://1drv.ms/f/c/3971ed61d3817b59/IgCIZ1E8DzthTaIYqe7n_fZdAbP7_SlMZS_NKaosO61cuIU?e=qFyVbv).
+* [`captured` of X-Humans dataset](https://1drv.ms/f/c/3971ed61d3817b59/IgBDtPHUCaxpRLDzAvRSQg81AVqtJqZEj13p-4-PQwH0mOY?e=1ofpM1).
 
 ## Reference
 ```
